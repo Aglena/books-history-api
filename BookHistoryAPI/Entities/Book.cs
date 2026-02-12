@@ -1,0 +1,15 @@
+﻿using BookHistoryApi.Entities;
+
+namespace BookHistoryApi.NewFolder
+{
+    public class Book
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string ShortDescription { get; set; } = string.Empty;
+        public DateTime PublishDate { get; set; }
+
+        public ICollection<Author> Authors { get; set; } = new List<Author>();
+        public ICollection<BookHistoryEntry> ChangeHistory { get; set; } = new List<BookHistoryEntry>();
+    }
+}
