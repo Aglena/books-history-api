@@ -1,0 +1,6 @@
+@BookHistoryAPI_HostAddress = http://localhost:5255
+
+GET {{BookHistoryAPI_HostAddress}}/books/
+Accept: application/json
+
+###
