@@ -88,7 +88,7 @@ namespace BookHistoryApi.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<BookHistoryDto>> GetBookHistoryAsync(int bookId)
+        public async Task<List<BookHistoryDto>> GetBookHistoryAsync(int bookId, BookHistoryQueryDto queryDto)
         {
             var exists = await _context.Books
                 .AnyAsync(b => b.Id == bookId);
@@ -96,8 +96,25 @@ namespace BookHistoryApi.Services
             if (!exists)
                 throw new BookNotFoundException($"Book with id {bookId} not found");
 
-            return await _context.BookChangeHistories
-                .Where(h => h.BookId == bookId)
+            var query = BookHistoryQuery.FromDto(queryDto);
+
+            IQueryable<BookHistoryEntry> historyEntries = _context.BookChangeHistories
+                .AsNoTracking()
+                .Where(h => h.BookId == bookId);
+
+            if (query.ChangedProperty.HasValue)
+                historyEntries = historyEntries.Where(h => h.ChangedProperty == query.ChangedProperty.Value);
+
+            if (query.ChangedFrom.HasValue)
+                historyEntries = historyEntries.Where(h => h.ChangeDate >= query.ChangedFrom.Value);
+
+            if (query.ChangedTo.HasValue)
+                historyEntries = historyEntries.Where(h => h.ChangeDate <= query.ChangedTo.Value);
+
+            if (!string.IsNullOrWhiteSpace(query.Description))
+                historyEntries = historyEntries.Where(h => h.Description.Contains(query.Description));
+
+            return await historyEntries
                 .OrderByDescending(h => h.ChangeDate)
                 .Select(h => new BookHistoryDto
                 {

@@ -38,9 +38,9 @@ namespace BookHistoryApi.Controllers
         }
 
         [HttpGet("{id}/history")]
-        public async Task<ActionResult<List<BookHistoryDto>>> GetHistory(int id)
+        public async Task<ActionResult<List<BookHistoryDto>>> GetHistory(int id, [FromQuery] BookHistoryQueryDto query)
         {
-            var history = await _service.GetBookHistoryAsync(id);
+            var history = await _service.GetBookHistoryAsync(id, query);
             return Ok(history);
         }
     }

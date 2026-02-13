@@ -1,0 +1,13 @@
+using BookHistoryApi.Entities;
+using System;
+
+namespace BookHistoryApi.DTOs
+{
+    public class BookHistoryQueryDto
+    {
+        public string? Description { get; set; }
+        public string? ChangedProperty { get; set; }
+        public DateTime? ChangedFrom { get; set; }
+        public DateTime? ChangedTo { get; set; }
+    }
+}
