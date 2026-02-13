@@ -1,5 +1,3 @@
-﻿using BookHistoryApi.NewFolder;
-
 namespace BookHistoryApi.Entities
 {
     public class Author

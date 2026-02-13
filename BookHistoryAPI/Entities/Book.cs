@@ -1,6 +1,4 @@
-﻿using BookHistoryApi.Entities;
-
-namespace BookHistoryApi.NewFolder
+namespace BookHistoryApi.Entities
 {
     public class Book
     {

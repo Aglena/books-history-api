@@ -1,7 +1,6 @@
 using BookHistoryApi.Data;
 using BookHistoryApi.DTOs;
 using BookHistoryApi.Entities;
-using BookHistoryApi.NewFolder;
 
 namespace BookHistoryApi.Services
 {

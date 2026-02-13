@@ -1,5 +1,4 @@
-﻿using BookHistoryApi.Entities;
-using BookHistoryApi.NewFolder;
+using BookHistoryApi.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookHistoryApi.Data
