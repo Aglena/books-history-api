@@ -3,7 +3,7 @@ namespace BookHistoryApi.Entities
     public enum BookProperty
     {
         Title,
-        ShortDescription,
+        Description,
         PublishDate,
         AuthorName
     }

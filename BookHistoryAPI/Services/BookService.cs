@@ -28,7 +28,7 @@ namespace BookHistoryApi.Services
             var book = new Book
             {
                 Title = dto.Title.Trim(),
-                ShortDescription = dto.ShortDescription,
+                Description = dto.Description,
                 PublishDate = dto.PublishDate,
                 Authors = dto.Authors
                     .Select(a => new Author { Name = a.Trim() })
@@ -53,7 +53,7 @@ namespace BookHistoryApi.Services
             return new BookDto
             {
                 Title = book.Title,
-                ShortDescription = book.ShortDescription,
+                Description = book.Description,
                 PublishDate = book.PublishDate,
                 Authors = book.Authors
                     .Select(a => a.Name)
@@ -81,7 +81,7 @@ namespace BookHistoryApi.Services
             var now = DateTime.UtcNow;
 
             UpdateTitleIfChanged(book, dto.Title, now);
-            UpdateDescriptionIfChanged(book, dto.ShortDescription, now);
+            UpdateDescriptionIfChanged(book, dto.Description, now);
             UpdatePublishDateIfChanged(book, dto.PublishDate, now);
             await UpdateAuthorsIfChanged(book, dto.Authors, now);
 
@@ -107,20 +107,20 @@ namespace BookHistoryApi.Services
             }
         }
 
-        private void UpdateDescriptionIfChanged(Book book, string shortDescription, DateTime now)
+        private void UpdateDescriptionIfChanged(Book book, string description, DateTime now)
         {
-            var newDescription = shortDescription?.Trim() ?? string.Empty;
-            if (book.ShortDescription != newDescription)
+            var newDescription = description?.Trim() ?? string.Empty;
+            if (book.Description != newDescription)
             {
                 book.ChangeHistory.Add(new BookHistoryEntry
                 {
                     BookId = book.Id,
                     Description = $"Description was changed to \"{newDescription}\"",
-                    ChangedProperty = BookProperty.ShortDescription,
+                    ChangedProperty = BookProperty.Description,
                     ChangeDate = now
                 });
 
-                book.ShortDescription = newDescription;
+                book.Description = newDescription;
             }
         }
 
