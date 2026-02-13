@@ -9,5 +9,7 @@ namespace BookHistoryApi.DTOs
 
         [Range(1, 100)]
         public int PageSize { get; set; } = 20;
+
+        public SortingOrder? OrderDir { get; set; }
     }
 }

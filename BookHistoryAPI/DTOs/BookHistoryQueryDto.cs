@@ -9,5 +9,7 @@ namespace BookHistoryApi.DTOs
         public string? ChangedProperty { get; set; }
         public DateTime? ChangedFrom { get; set; }
         public DateTime? ChangedTo { get; set; }
+
+        public SortingField? OrderBy { get; set; }
     }
 }

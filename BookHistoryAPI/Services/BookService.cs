@@ -115,9 +115,28 @@ namespace BookHistoryApi.Services
             if (!string.IsNullOrWhiteSpace(query.Description))
                 historyEntries = historyEntries.Where(h => h.Description.Contains(query.Description));
 
-            historyEntries = historyEntries
-                .OrderByDescending(h => h.ChangeDate)
-                .ThenByDescending(h => h.Id);
+            switch (queryDto.OrderBy)
+            {
+                case SortingField.ChangeDate:
+                    historyEntries = queryDto.OrderDir == SortingOrder.Asc 
+                        ? historyEntries
+                            .OrderBy(h => h.ChangeDate)
+                            .ThenBy(h => h.Id)
+                        : historyEntries
+                            .OrderByDescending(h => h.ChangeDate)
+                            .ThenByDescending(h => h.Id);
+                    break;
+                case null:
+                default:
+                    historyEntries = queryDto.OrderDir == SortingOrder.Asc
+                        ? historyEntries
+                            .OrderBy(h => h.ChangeDate)
+                            .ThenBy(h => h.Id)
+                        : historyEntries
+                            .OrderByDescending(h => h.ChangeDate)
+                            .ThenByDescending(h => h.Id);
+                    break;
+            }
 
             historyEntries = historyEntries
                 .Skip((queryDto.Page - 1) * queryDto.PageSize)
