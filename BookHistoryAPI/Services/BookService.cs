@@ -19,18 +19,19 @@ namespace BookHistoryApi.Services
 
         public async Task<int> CreateAsync(CreateBookDto dto)
         {
-            var title = dto.Title.Trim();
-
-            if (string.IsNullOrWhiteSpace(title))
+            if (string.IsNullOrWhiteSpace(dto.Title))
                 throw new ValidationException("Title cannot be empty");
+
+            if (dto.Authors.Any(a => string.IsNullOrWhiteSpace(a)))
+                throw new ValidationException("Author name cannot be empty");
 
             var book = new Book
             {
-                Title = dto.Title,
+                Title = dto.Title.Trim(),
                 ShortDescription = dto.ShortDescription,
                 PublishDate = dto.PublishDate,
                 Authors = dto.Authors
-                    .Select(a => new Author { Name = a })
+                    .Select(a => new Author { Name = a.Trim() })
                     .ToList()
             };
 
@@ -42,14 +43,148 @@ namespace BookHistoryApi.Services
 
         public async Task UpdateAsync(int id, UpdateBookDto dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.Title))
+                throw new ValidationException("Title cannot be empty");
+
+            if (dto.Authors.Any(a => string.IsNullOrWhiteSpace(a)))
+                throw new ValidationException("Author name cannot be empty");
+
             var book = await _context.Books
                 .Include(b => b.ChangeHistory)
+                .Include(b => b.Authors)
                 .FirstOrDefaultAsync(b => b.Id == id);
 
             if (book == null)
                 throw new BookNotFoundException($"Book with id {id} not found");
 
-            // Update logic
+
+            var now = DateTime.UtcNow;
+
+            UpdateTitleIfChanged(book, dto.Title, now);
+            UpdateDescriptionIfChanged(book, dto.ShortDescription, now);
+            UpdatePublishDateIfChanged(book, dto.PublishDate, now);
+            await UpdateAuthorsIfChanged(book, dto.Authors, now);
+
+            await _context.SaveChangesAsync();
+        }
+
+
+        private void UpdateTitleIfChanged(Book book, string title, DateTime now)
+        {
+            var newTitle = title.Trim();
+
+            if (book.Title != newTitle)
+            {
+                book.ChangeHistory.Add(new BookHistoryEntry
+                {
+                    BookId = book.Id,
+                    Description = $"Title was changed to \"{newTitle}\"",
+                    ChangedProperty = BookProperty.Title,
+                    ChangeDate = now
+                });
+
+                book.Title = newTitle;
+            }
+        }
+
+        private void UpdateDescriptionIfChanged(Book book, string shortDescription, DateTime now)
+        {
+            var newDescription = shortDescription?.Trim() ?? string.Empty;
+            if (book.ShortDescription != newDescription)
+            {
+                book.ChangeHistory.Add(new BookHistoryEntry
+                {
+                    BookId = book.Id,
+                    Description = $"Description was changed to \"{newDescription}\"",
+                    ChangedProperty = BookProperty.ShortDescription,
+                    ChangeDate = now
+                });
+
+                book.ShortDescription = newDescription;
+            }
+        }
+
+        private void UpdatePublishDateIfChanged(Book book, DateTime publishDate, DateTime now)
+        {
+            if (book.PublishDate != publishDate)
+            {
+                book.ChangeHistory.Add(new BookHistoryEntry
+                {
+                    BookId = book.Id,
+                    Description = $"Publish date was changed to \"{publishDate}\"",
+                    ChangedProperty = BookProperty.PublishDate,
+                    ChangeDate = now
+                });
+
+                book.PublishDate = publishDate;
+            }
+        }
+
+        private async Task UpdateAuthorsIfChanged(Book book, List<string>? authorNames, DateTime now)
+        {
+            var newAuthorNames = authorNames?
+                .Select(a => a.Trim())
+                .Distinct()
+                .ToList() ?? new List<string>();
+
+            var currentAuthorNames = book.Authors
+                .Select(a => a.Name)
+                .ToList();
+
+            var authorsToRemove = book.Authors
+                .Where(a => !newAuthorNames.Contains(a.Name))
+                .ToList();
+
+            foreach (var author in authorsToRemove)
+            {
+                book.Authors.Remove(author);
+
+                book.ChangeHistory.Add(new BookHistoryEntry
+                {
+                    BookId = book.Id,
+                    Description = $"Author \"{author.Name}\" was removed",
+                    ChangedProperty = BookProperty.AuthorName,
+                    ChangeDate = now
+                });
+
+                var isUsedElsewhere = await _context.Books
+                    .AnyAsync(b => b.Id != book.Id && b.Authors.Any(a => a.Id == author.Id));
+
+                if (!isUsedElsewhere)
+                {
+                    _context.Authors.Remove(author);
+                }
+            }
+
+            var authorsToAdd = newAuthorNames
+                .Where(name => !currentAuthorNames.Contains(name))
+                .ToList();
+
+            foreach (var authorName in authorsToAdd)
+            {
+                var existingAuthor = await _context.Authors
+                    .FirstOrDefaultAsync(a => a.Name == authorName);
+
+                if (existingAuthor == null)
+                {
+                    existingAuthor = new Author
+                    {
+                        Name = authorName
+                    };
+
+                    _context.Authors.Add(existingAuthor);
+                }
+
+                book.Authors.Add(existingAuthor);
+
+                book.ChangeHistory.Add(new BookHistoryEntry
+                {
+                    BookId = book.Id,
+                    Description = $"Author \"{existingAuthor.Name}\" was added",
+                    ChangedProperty = BookProperty.AuthorName,
+                    ChangeDate = now
+                });
+            }
         }
     }
 }

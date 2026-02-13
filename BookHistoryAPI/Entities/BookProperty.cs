@@ -4,6 +4,7 @@ namespace BookHistoryApi.Entities
     {
         Title,
         ShortDescription,
-        PublishDate
+        PublishDate,
+        AuthorName
     }
 }
