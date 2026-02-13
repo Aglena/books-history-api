@@ -1,6 +1,3 @@
-using BookHistoryApi.Entities;
-using System;
-
 namespace BookHistoryApi.DTOs
 {
     public class BookHistoryQueryDto : QueryDto
