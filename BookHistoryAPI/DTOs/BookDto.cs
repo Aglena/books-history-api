@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookHistoryApi.DTOs
 {
-    public class CreateBookDto
+    public class BookDto
     {
         [Required]
         public string Title { get; set; } = string.Empty;

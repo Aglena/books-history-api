@@ -16,7 +16,7 @@ namespace BookHistoryApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateBookDto dto)
+        public async Task<IActionResult> Create([FromBody] BookDto dto)
         {
             var id = await _service.CreateAsync(dto);
 
@@ -30,7 +30,7 @@ namespace BookHistoryApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateBookDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] BookDto dto)
         {
             await _service.UpdateAsync(id, dto);
             return NoContent();

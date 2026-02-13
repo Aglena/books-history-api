@@ -17,7 +17,7 @@ namespace BookHistoryApi.Services
         }
 
 
-        public async Task<int> CreateAsync(CreateBookDto dto)
+        public async Task<int> CreateAsync(BookDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Title))
                 throw new ValidationException("Title cannot be empty");
@@ -41,7 +41,7 @@ namespace BookHistoryApi.Services
             return book.Id;
         }
 
-        public async Task UpdateAsync(int id, UpdateBookDto dto)
+        public async Task UpdateAsync(int id, BookDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Title))
                 throw new ValidationException("Title cannot be empty");
