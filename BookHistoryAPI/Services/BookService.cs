@@ -2,6 +2,7 @@ using BookHistoryApi.Data;
 using BookHistoryApi.DTOs;
 using BookHistoryApi.Entities;
 using BookHistoryApi.Exceptions;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
@@ -114,8 +115,15 @@ namespace BookHistoryApi.Services
             if (!string.IsNullOrWhiteSpace(query.Description))
                 historyEntries = historyEntries.Where(h => h.Description.Contains(query.Description));
 
-            return await historyEntries
+            historyEntries = historyEntries
                 .OrderByDescending(h => h.ChangeDate)
+                .ThenByDescending(h => h.Id);
+
+            historyEntries = historyEntries
+                .Skip((queryDto.Page - 1) * queryDto.PageSize)
+                .Take(queryDto.PageSize);
+
+            return await historyEntries
                 .Select(h => new BookHistoryDto
                 {
                     ChangeDate = h.ChangeDate,

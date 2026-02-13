@@ -3,7 +3,7 @@ using System;
 
 namespace BookHistoryApi.DTOs
 {
-    public class BookHistoryQueryDto
+    public class BookHistoryQueryDto : QueryDto
     {
         public string? Description { get; set; }
         public string? ChangedProperty { get; set; }
