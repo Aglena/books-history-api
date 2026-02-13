@@ -182,7 +182,7 @@ namespace BookHistoryApi.Services
                 {
                     BookId = book.Id,
                     Description = $"Author \"{author.Name}\" was removed",
-                    ChangedProperty = BookProperty.AuthorName,
+                    ChangedProperty = BookProperty.Author,
                     ChangeDate = now
                 });
 
@@ -220,7 +220,7 @@ namespace BookHistoryApi.Services
                 {
                     BookId = book.Id,
                     Description = $"Author \"{existingAuthor.Name}\" was added",
-                    ChangedProperty = BookProperty.AuthorName,
+                    ChangedProperty = BookProperty.Author,
                     ChangeDate = now
                 });
             }

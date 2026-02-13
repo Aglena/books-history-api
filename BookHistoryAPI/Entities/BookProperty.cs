@@ -5,6 +5,6 @@ namespace BookHistoryApi.Entities
         Title,
         Description,
         PublishDate,
-        AuthorName
+        Author
     }
 }
