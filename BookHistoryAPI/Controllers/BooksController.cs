@@ -24,9 +24,10 @@ namespace BookHistoryApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<ActionResult<BookDto>> GetById(int id)
         {
-            return Ok();
+            var dto = await _service.GetByIdAsync(id);
+            return Ok(dto);
         }
 
         [HttpPut("{id}")]

@@ -41,6 +41,26 @@ namespace BookHistoryApi.Services
             return book.Id;
         }
 
+        public async Task<BookDto> GetByIdAsync(int id)
+        {
+            var book = await _context.Books
+                .Include(b => b.Authors)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (book == null)
+                throw new BookNotFoundException($"Book with id {id} not found");
+
+            return new BookDto
+            {
+                Title = book.Title,
+                ShortDescription = book.ShortDescription,
+                PublishDate = book.PublishDate,
+                Authors = book.Authors
+                    .Select(a => a.Name)
+                    .ToList()
+            };
+        }
+
         public async Task UpdateAsync(int id, BookDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Title))
