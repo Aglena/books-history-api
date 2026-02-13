@@ -28,6 +28,13 @@ namespace BookHistoryApi.Controllers
         {
             return Ok();
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateBookDto dto)
+        {
+            await _service.UpdateAsync(id, dto);
+            return NoContent();
+        }
     }
 }
 
