@@ -88,6 +88,25 @@ namespace BookHistoryApi.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<List<BookHistoryDto>> GetBookHistoryAsync(int bookId)
+        {
+            var exists = await _context.Books
+                .AnyAsync(b => b.Id == bookId);
+
+            if (!exists)
+                throw new BookNotFoundException($"Book with id {bookId} not found");
+
+            return await _context.BookChangeHistories
+                .Where(h => h.BookId == bookId)
+                .OrderByDescending(h => h.ChangeDate)
+                .Select(h => new BookHistoryDto
+                {
+                    ChangeDate = h.ChangeDate,
+                    Description = h.Description
+                })
+                .ToListAsync();
+        }
+
 
         private void UpdateTitleIfChanged(Book book, string title, DateTime now)
         {

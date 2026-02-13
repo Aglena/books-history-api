@@ -7,5 +7,6 @@ namespace BookHistoryApi.Services
         Task<int> CreateAsync(BookDto dto);
         Task<BookDto> GetByIdAsync(int id);
         Task UpdateAsync(int id, BookDto dto);
+        Task<List<BookHistoryDto>> GetBookHistoryAsync(int bookId);
     }
 }

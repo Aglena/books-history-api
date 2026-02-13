@@ -36,6 +36,13 @@ namespace BookHistoryApi.Controllers
             await _service.UpdateAsync(id, dto);
             return NoContent();
         }
+
+        [HttpGet("{id}/history")]
+        public async Task<ActionResult<List<BookHistoryDto>>> GetHistory(int id)
+        {
+            var history = await _service.GetBookHistoryAsync(id);
+            return Ok(history);
+        }
     }
 }
 
