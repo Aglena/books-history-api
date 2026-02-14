@@ -91,7 +91,7 @@ namespace BookHistoryApi.Services
 
             BookProperty? changedProperty = null;
             if (!string.IsNullOrWhiteSpace(queryDto.ChangedProperty))
-                Enum.Parse<BookProperty>(queryDto.ChangedProperty.Trim());
+                changedProperty = Enum.Parse<BookProperty>(queryDto.ChangedProperty.Trim(), ignoreCase: true);
 
             IQueryable<BookHistoryEntry> historyEntries = _context.BookChangeHistories
                 .AsNoTracking()
