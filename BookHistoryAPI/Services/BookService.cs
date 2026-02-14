@@ -19,7 +19,7 @@ namespace BookHistoryApi.Services
 
         public async Task<int> CreateAsync(BookDto dto)
         {
-            BookHistoryDtoValidator.Validate(dto);
+            BookHistoryDtoValidator.ValidateForCreate(dto);
 
             var book = new Book
             {
@@ -57,9 +57,9 @@ namespace BookHistoryApi.Services
             };
         }
 
-        public async Task UpdateAsync(int id, BookDto dto)
+        public async Task UpdateAsync(int id, UpdateBookDto dto)
         {
-            BookHistoryDtoValidator.Validate(dto);
+            BookHistoryDtoValidator.ValidateForUpdate(dto);
 
             var book = await _context.Books
                 .Include(b => b.ChangeHistory)
@@ -146,11 +146,11 @@ namespace BookHistoryApi.Services
         }
 
 
-        private void UpdateTitleIfChanged(Book book, string title, DateTime now)
+        private void UpdateTitleIfChanged(Book book, string? title, DateTime now)
         {
-            var newTitle = title.Trim();
+            var newTitle = title?.Trim();
 
-            if (book.Title != newTitle)
+            if (!string.IsNullOrEmpty(newTitle) && book.Title != newTitle)
             {
                 book.ChangeHistory.Add(new BookHistoryEntry
                 {
@@ -164,10 +164,11 @@ namespace BookHistoryApi.Services
             }
         }
 
-        private void UpdateDescriptionIfChanged(Book book, string description, DateTime now)
+        private void UpdateDescriptionIfChanged(Book book, string? description, DateTime now)
         {
-            var newDescription = description?.Trim() ?? string.Empty;
-            if (book.Description != newDescription)
+            var newDescription = description?.Trim();
+
+            if (!string.IsNullOrEmpty(newDescription) && book.Description != newDescription)
             {
                 book.ChangeHistory.Add(new BookHistoryEntry
                 {
@@ -181,19 +182,19 @@ namespace BookHistoryApi.Services
             }
         }
 
-        private void UpdatePublishDateIfChanged(Book book, DateTime publishDate, DateTime now)
+        private void UpdatePublishDateIfChanged(Book book, DateTime? publishDate, DateTime now)
         {
-            if (book.PublishDate != publishDate)
+            if (publishDate.HasValue && book.PublishDate != publishDate)
             {
                 book.ChangeHistory.Add(new BookHistoryEntry
                 {
                     BookId = book.Id,
-                    Description = $"Publish date was changed to \"{publishDate}\"",
+                    Description = $"Publish date was changed to \"{publishDate.Value}\"",
                     ChangedProperty = BookProperty.PublishDate,
                     ChangeDate = now
                 });
 
-                book.PublishDate = publishDate;
+                book.PublishDate = publishDate.Value;
             }
         }
 

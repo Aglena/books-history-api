@@ -30,8 +30,8 @@ namespace BookHistoryApi.Controllers
             return Ok(dto);
         }
 
-        [HttpPut("{id:int:min(1)}")]
-        public async Task<IActionResult> Update(int id, [FromBody] BookDto dto)
+        [HttpPatch("{id:int:min(1)}")]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateBookDto dto)
         {
             await _service.UpdateAsync(id, dto);
             return NoContent();
