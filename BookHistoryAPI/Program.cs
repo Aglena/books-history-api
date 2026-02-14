@@ -12,7 +12,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IBookService, BookService>(); 
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IHistoryService, HistoryService>();
 builder.Services.AddExceptionHandler<ExcepitonMiddleware>();
 builder.Services.AddProblemDetails();
 
