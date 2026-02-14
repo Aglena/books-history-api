@@ -8,10 +8,16 @@ namespace BookHistoryApi.Validation
     {
         internal static void Validate(BookEventQueryDto dto)
         {
-            if (!string.IsNullOrWhiteSpace(dto.ChangedProperty))
+            if (!string.IsNullOrWhiteSpace(dto.Target))
             {
-                if (!Enum.IsDefined(typeof(EventTarget), dto.ChangedProperty.Trim()))
-                    throw new ValidationException($"Invalid {nameof(dto.ChangedProperty)} value \"{dto.ChangedProperty}\"");
+                if (!Enum.IsDefined(typeof(EventTarget), dto.Target.Trim()))
+                    throw new ValidationException($"Invalid event {nameof(dto.Target)} value \"{dto.Target}\"");
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.Type))
+            {
+                if (!Enum.IsDefined(typeof(EventType), dto.Type.Trim()))
+                    throw new ValidationException($"Invalid event {nameof(dto.Type)} value \"{dto.Type}\"");
             }
 
             if (dto.OccuredFrom.HasValue && dto.OccuredTo.HasValue && dto.OccuredFrom.Value > dto.OccuredTo.Value)
