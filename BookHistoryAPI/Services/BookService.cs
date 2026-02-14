@@ -2,6 +2,7 @@ using BookHistoryApi.Data;
 using BookHistoryApi.DTOs;
 using BookHistoryApi.Entities;
 using BookHistoryApi.Exceptions;
+using BookHistoryApi.Querying;
 using BookHistoryApi.Validation;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +36,27 @@ namespace BookHistoryApi.Services
             await _context.SaveChangesAsync();
 
             return book.Id;
+        }
+
+        public async Task<List<BookDto>> GetAll(BookQueryDto queryDto)
+        {
+            BookQueryDtoValidator.Validate(queryDto);
+
+            var books = _context.Books.AsNoTracking();
+
+            books = BookQuery.Apply(books, queryDto);
+
+            return await books
+                .Select(b => new BookDto
+                {
+                    Title = b.Title,
+                    Description = b.Description,
+                    PublishDate = b.PublishDate,
+                    Authors = b.Authors
+                        .Select(a => a.Name)
+                        .ToList()
+                })
+                .ToListAsync();
         }
 
         public async Task<BookDto> GetByIdAsync(int id)

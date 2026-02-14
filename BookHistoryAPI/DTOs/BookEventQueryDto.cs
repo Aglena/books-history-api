@@ -8,6 +8,6 @@ namespace BookHistoryApi.DTOs
         public DateTime? OccuredFrom { get; set; }
         public DateTime? OccuredTo { get; set; }
 
-        public SortingField? OrderBy { get; set; }
+        public BookEventSortingField? OrderBy { get; set; }
     }
 }

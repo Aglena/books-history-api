@@ -23,11 +23,18 @@ namespace BookHistoryApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id }, null);
         }
 
+        [HttpGet]
+        public async Task<ActionResult<BookDto>> GetAll([FromQuery] BookQueryDto dto)
+        {
+            var books = await _service.GetAll(dto);
+            return Ok(books);
+        }
+
         [HttpGet("{id:int:min(1)}")]
         public async Task<ActionResult<BookDto>> GetById(int id)
         {
-            var dto = await _service.GetByIdAsync(id);
-            return Ok(dto);
+            var book = await _service.GetByIdAsync(id);
+            return Ok(book);
         }
 
         [HttpPatch("{id:int:min(1)}")]

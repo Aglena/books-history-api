@@ -50,17 +50,17 @@ namespace BookHistoryApi.Querying
 
             switch (dto.OrderBy)
             {
-                case SortingField.OccuredAt:
+                case BookEventSortingField.OccuredAt:
                     events = events
                         .ApplyOrder(e => e.OccuredAt, isAsc)
                         .ApplyOrder(e => e.Id, isAsc, true);
                     break;
-                case SortingField.EventTarget:
+                case BookEventSortingField.EventTarget:
                     events = events
                         .ApplyOrder(e => e.Target, isAsc)
                         .ApplyOrder(e => e.Id, isAsc, true);
                     break;
-                case SortingField.EventType:
+                case BookEventSortingField.EventType:
                     events = events
                         .ApplyOrder(e => e.Type, isAsc)
                         .ApplyOrder(e => e.Id, isAsc, true);
