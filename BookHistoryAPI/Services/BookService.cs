@@ -2,9 +2,8 @@ using BookHistoryApi.Data;
 using BookHistoryApi.DTOs;
 using BookHistoryApi.Entities;
 using BookHistoryApi.Exceptions;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using BookHistoryApi.Validation;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace BookHistoryApi.Services
 {
@@ -20,11 +19,7 @@ namespace BookHistoryApi.Services
 
         public async Task<int> CreateAsync(BookDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Title))
-                throw new ValidationException("Title cannot be empty");
-
-            if (dto.Authors.Any(a => string.IsNullOrWhiteSpace(a)))
-                throw new ValidationException("Author name cannot be empty");
+            BookHistoryDtoValidator.Validate(dto);
 
             var book = new Book
             {
@@ -64,11 +59,7 @@ namespace BookHistoryApi.Services
 
         public async Task UpdateAsync(int id, BookDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Title))
-                throw new ValidationException("Title cannot be empty");
-
-            if (dto.Authors.Any(a => string.IsNullOrWhiteSpace(a)))
-                throw new ValidationException("Author name cannot be empty");
+            BookHistoryDtoValidator.Validate(dto);
 
             var book = await _context.Books
                 .Include(b => b.ChangeHistory)
@@ -77,7 +68,6 @@ namespace BookHistoryApi.Services
 
             if (book == null)
                 throw new BookNotFoundException($"Book with id {id} not found");
-
 
             var now = DateTime.UtcNow;
 
@@ -91,29 +81,33 @@ namespace BookHistoryApi.Services
 
         public async Task<List<BookHistoryDto>> GetBookHistoryAsync(int bookId, BookHistoryQueryDto queryDto)
         {
+            BookHistoryQueryDtoValidator.Validate(queryDto);
+
             var exists = await _context.Books
                 .AnyAsync(b => b.Id == bookId);
 
             if (!exists)
                 throw new BookNotFoundException($"Book with id {bookId} not found");
 
-            var query = BookHistoryQuery.FromDto(queryDto);
+            BookProperty? changedProperty = null;
+            if (!string.IsNullOrWhiteSpace(queryDto.ChangedProperty))
+                Enum.Parse<BookProperty>(queryDto.ChangedProperty.Trim());
 
             IQueryable<BookHistoryEntry> historyEntries = _context.BookChangeHistories
                 .AsNoTracking()
                 .Where(h => h.BookId == bookId);
 
-            if (query.ChangedProperty.HasValue)
-                historyEntries = historyEntries.Where(h => h.ChangedProperty == query.ChangedProperty.Value);
+            if (changedProperty.HasValue)
+                historyEntries = historyEntries.Where(h => h.ChangedProperty == changedProperty.Value);
 
-            if (query.ChangedFrom.HasValue)
-                historyEntries = historyEntries.Where(h => h.ChangeDate >= query.ChangedFrom.Value);
+            if (queryDto.ChangedFrom.HasValue)
+                historyEntries = historyEntries.Where(h => h.ChangeDate >= queryDto.ChangedFrom.Value);
 
-            if (query.ChangedTo.HasValue)
-                historyEntries = historyEntries.Where(h => h.ChangeDate <= query.ChangedTo.Value);
+            if (queryDto.ChangedTo.HasValue)
+                historyEntries = historyEntries.Where(h => h.ChangeDate <= queryDto.ChangedTo.Value);
 
-            if (!string.IsNullOrWhiteSpace(query.Description))
-                historyEntries = historyEntries.Where(h => h.Description.Contains(query.Description));
+            if (!string.IsNullOrWhiteSpace(queryDto.Description))
+                historyEntries = historyEntries.Where(h => h.Description.Contains(queryDto.Description));
 
             switch (queryDto.OrderBy)
             {
