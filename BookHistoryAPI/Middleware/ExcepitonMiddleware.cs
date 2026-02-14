@@ -1,6 +1,7 @@
 using BookHistoryApi.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookHistoryApi.Middleware
 {
@@ -28,6 +29,13 @@ namespace BookHistoryApi.Middleware
                 {
                     Status = StatusCodes.Status404NotFound,
                     Title = "Book not found",
+                    Detail = ex.Message
+                },
+
+                ValidationException ex => new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Validation error",
                     Detail = ex.Message
                 },
 
