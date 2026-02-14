@@ -7,7 +7,7 @@ namespace BookHistoryApi.DTOs
         [Required]
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public DateTime PublishDate { get; set; }
+        public DateOnly PublishDate { get; set; }
         public List<string> Authors { get; set; } = new List<string>();
     }
 }

@@ -62,7 +62,7 @@ namespace BookHistoryApi.Services
             BookDtoValidator.ValidateForUpdate(dto);
 
             var book = await _context.Books
-                .Include(b => b.ChangeHistory)
+                .Include(b => b.Events)
                 .Include(b => b.Authors)
                 .FirstOrDefaultAsync(b => b.Id == id);
 
@@ -79,9 +79,9 @@ namespace BookHistoryApi.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<BookHistoryDto>> GetBookHistoryAsync(int bookId, BookHistoryQueryDto queryDto)
+        public async Task<List<BookEventDto>> GetBookHistoryAsync(int bookId, BookEventQueryDto queryDto)
         {
-            BookHistoryQueryDtoValidator.Validate(queryDto);
+            BookEventQueryDtoValidator.Validate(queryDto);
 
             var exists = await _context.Books
                 .AnyAsync(b => b.Id == bookId);
@@ -89,57 +89,76 @@ namespace BookHistoryApi.Services
             if (!exists)
                 throw new BookNotFoundException($"Book with id {bookId} not found");
 
-            BookProperty? changedProperty = null;
+            EventTarget? changedProperty = null;
             if (!string.IsNullOrWhiteSpace(queryDto.ChangedProperty))
-                changedProperty = Enum.Parse<BookProperty>(queryDto.ChangedProperty.Trim(), ignoreCase: true);
+                changedProperty = Enum.Parse<EventTarget>(queryDto.ChangedProperty.Trim(), ignoreCase: true);
 
-            IQueryable<BookHistoryEntry> historyEntries = _context.BookChangeHistories
+            IQueryable<BookEvent> events = _context.BookEvents
                 .AsNoTracking()
                 .Where(h => h.BookId == bookId);
 
             if (changedProperty.HasValue)
-                historyEntries = historyEntries.Where(h => h.ChangedProperty == changedProperty.Value);
+                events = events.Where(h => h.Target == changedProperty.Value);
 
-            if (queryDto.ChangedFrom.HasValue)
-                historyEntries = historyEntries.Where(h => h.ChangeDate >= queryDto.ChangedFrom.Value);
+            if (queryDto.OccuredFrom.HasValue)
+                events = events.Where(h => h.OccuredAt >= queryDto.OccuredFrom.Value);
 
-            if (queryDto.ChangedTo.HasValue)
-                historyEntries = historyEntries.Where(h => h.ChangeDate <= queryDto.ChangedTo.Value);
+            if (queryDto.OccuredTo.HasValue)
+                events = events.Where(h => h.OccuredAt <= queryDto.OccuredTo.Value);
 
             if (!string.IsNullOrWhiteSpace(queryDto.Description))
-                historyEntries = historyEntries.Where(h => h.Description.Contains(queryDto.Description));
+                events = events.Where(h => h.Description.Contains(queryDto.Description));
 
             switch (queryDto.OrderBy)
             {
-                case SortingField.ChangeDate:
-                    historyEntries = queryDto.OrderDir == SortingOrder.Asc 
-                        ? historyEntries
-                            .OrderBy(h => h.ChangeDate)
+                case SortingField.OccuredAt:
+                    events = queryDto.OrderDir == SortingOrder.Asc 
+                        ? events
+                            .OrderBy(h => h.OccuredAt)
                             .ThenBy(h => h.Id)
-                        : historyEntries
-                            .OrderByDescending(h => h.ChangeDate)
+                        : events
+                            .OrderByDescending(h => h.OccuredAt)
                             .ThenByDescending(h => h.Id);
                     break;
+                case SortingField.EventTarget:
+                    events = queryDto.OrderDir == SortingOrder.Asc
+                        ? events
+                            .OrderBy(h => h.Target)
+                            .ThenBy(h => h.Id)
+                        : events
+                            .OrderByDescending(h => h.Target)
+                            .ThenByDescending(h => h.Id);
+                    break;
+                case SortingField.EventType:
+                    events = queryDto.OrderDir == SortingOrder.Asc
+                        ? events
+                            .OrderBy(h => h.Type)
+                            .ThenBy(h => h.Id)
+                        : events
+                            .OrderByDescending(h => h.Type)
+                            .ThenByDescending(h => h.Id);
+                    break;
+
                 case null:
                 default:
-                    historyEntries = queryDto.OrderDir == SortingOrder.Asc
-                        ? historyEntries
-                            .OrderBy(h => h.ChangeDate)
+                    events = queryDto.OrderDir == SortingOrder.Asc
+                        ? events
+                            .OrderBy(h => h.OccuredAt)
                             .ThenBy(h => h.Id)
-                        : historyEntries
-                            .OrderByDescending(h => h.ChangeDate)
+                        : events
+                            .OrderByDescending(h => h.OccuredAt)
                             .ThenByDescending(h => h.Id);
                     break;
             }
 
-            historyEntries = historyEntries
+            events = events
                 .Skip((queryDto.Page - 1) * queryDto.PageSize)
                 .Take(queryDto.PageSize);
 
-            return await historyEntries
-                .Select(h => new BookHistoryDto
+            return await events
+                .Select(h => new BookEventDto
                 {
-                    ChangeDate = h.ChangeDate,
+                    OccuredAt = h.OccuredAt,
                     Description = h.Description
                 })
                 .ToListAsync();
@@ -152,12 +171,13 @@ namespace BookHistoryApi.Services
 
             if (!string.IsNullOrEmpty(newTitle) && book.Title != newTitle)
             {
-                book.ChangeHistory.Add(new BookHistoryEntry
+                book.Events.Add(new BookEvent
                 {
                     BookId = book.Id,
                     Description = $"Title was changed to \"{newTitle}\"",
-                    ChangedProperty = BookProperty.Title,
-                    ChangeDate = now
+                    Target = EventTarget.BookTitle,
+                    Type = EventType.Updated,
+                    OccuredAt = now
                 });
 
                 book.Title = newTitle;
@@ -170,28 +190,30 @@ namespace BookHistoryApi.Services
 
             if (!string.IsNullOrEmpty(newDescription) && book.Description != newDescription)
             {
-                book.ChangeHistory.Add(new BookHistoryEntry
+                book.Events.Add(new BookEvent
                 {
                     BookId = book.Id,
                     Description = $"Description was changed to \"{newDescription}\"",
-                    ChangedProperty = BookProperty.Description,
-                    ChangeDate = now
+                    Target = EventTarget.BookDescription,
+                    Type = EventType.Updated,
+                    OccuredAt = now
                 });
 
                 book.Description = newDescription;
             }
         }
 
-        private void UpdatePublishDateIfChanged(Book book, DateTime? publishDate, DateTime now)
+        private void UpdatePublishDateIfChanged(Book book, DateOnly? publishDate, DateTime now)
         {
             if (publishDate.HasValue && book.PublishDate != publishDate)
             {
-                book.ChangeHistory.Add(new BookHistoryEntry
+                book.Events.Add(new BookEvent
                 {
                     BookId = book.Id,
                     Description = $"Publish date was changed to \"{publishDate.Value}\"",
-                    ChangedProperty = BookProperty.PublishDate,
-                    ChangeDate = now
+                    Target = EventTarget.BookPublishDate,
+                    Type = EventType.Updated,
+                    OccuredAt = now
                 });
 
                 book.PublishDate = publishDate.Value;
@@ -217,12 +239,13 @@ namespace BookHistoryApi.Services
             {
                 book.Authors.Remove(author);
 
-                book.ChangeHistory.Add(new BookHistoryEntry
+                book.Events.Add(new BookEvent
                 {
                     BookId = book.Id,
                     Description = $"Author \"{author.Name}\" was removed",
-                    ChangedProperty = BookProperty.Author,
-                    ChangeDate = now
+                    Target = EventTarget.BookAuthor,
+                    Type = EventType.Deleted,
+                    OccuredAt = now
                 });
 
                 var isUsedElsewhere = await _context.Books
@@ -255,12 +278,13 @@ namespace BookHistoryApi.Services
 
                 book.Authors.Add(existingAuthor);
 
-                book.ChangeHistory.Add(new BookHistoryEntry
+                book.Events.Add(new BookEvent
                 {
                     BookId = book.Id,
                     Description = $"Author \"{existingAuthor.Name}\" was added",
-                    ChangedProperty = BookProperty.Author,
-                    ChangeDate = now
+                    Target = EventTarget.BookAuthor,
+                    Type = EventType.Created,
+                    OccuredAt = now
                 });
             }
         }

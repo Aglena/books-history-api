@@ -57,7 +57,7 @@ namespace BookHistoryApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("PublishDate")
+                    b.Property<DateOnly>("PublishDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
@@ -69,7 +69,7 @@ namespace BookHistoryApi.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("BookHistoryApi.Entities.BookHistoryEntry", b =>
+            modelBuilder.Entity("BookHistoryApi.Entities.BookEvent", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,21 +78,24 @@ namespace BookHistoryApi.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("ChangeDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ChangedProperty")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("OccuredAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Target")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
 
-                    b.ToTable("BookChangeHistories");
+                    b.ToTable("BookEvents");
                 });
 
             modelBuilder.Entity("AuthorBook", b =>
@@ -110,18 +113,20 @@ namespace BookHistoryApi.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BookHistoryApi.Entities.BookHistoryEntry", b =>
+            modelBuilder.Entity("BookHistoryApi.Entities.BookEvent", b =>
                 {
-                    b.HasOne("BookHistoryApi.Entities.Book", null)
-                        .WithMany("ChangeHistory")
+                    b.HasOne("BookHistoryApi.Entities.Book", "Book")
+                        .WithMany("Events")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Book");
                 });
 
             modelBuilder.Entity("BookHistoryApi.Entities.Book", b =>
                 {
-                    b.Navigation("ChangeHistory");
+                    b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
         }

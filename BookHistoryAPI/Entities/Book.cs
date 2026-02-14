@@ -5,9 +5,9 @@ namespace BookHistoryApi.Entities
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public DateTime PublishDate { get; set; }
+        public DateOnly PublishDate { get; set; }
 
         public ICollection<Author> Authors { get; set; } = new List<Author>();
-        public ICollection<BookHistoryEntry> ChangeHistory { get; set; } = new List<BookHistoryEntry>();
+        public ICollection<BookEvent> Events { get; set; } = new List<BookEvent>();
     }
 }

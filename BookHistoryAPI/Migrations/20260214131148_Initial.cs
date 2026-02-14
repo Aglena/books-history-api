@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -31,8 +31,8 @@ namespace BookHistoryApi.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
-                    ShortDescription = table.Column<string>(type: "TEXT", nullable: false),
-                    PublishDate = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    PublishDate = table.Column<DateOnly>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,20 +64,22 @@ namespace BookHistoryApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BookChangeHistories",
+                name: "BookEvents",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     BookId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ChangeDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    OccuredAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Target = table.Column<int>(type: "INTEGER", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookChangeHistories", x => x.Id);
+                    table.PrimaryKey("PK_BookEvents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BookChangeHistories_Books_BookId",
+                        name: "FK_BookEvents_Books_BookId",
                         column: x => x.BookId,
                         principalTable: "Books",
                         principalColumn: "Id",
@@ -90,8 +92,8 @@ namespace BookHistoryApi.Migrations
                 column: "BooksId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookChangeHistories_BookId",
-                table: "BookChangeHistories",
+                name: "IX_BookEvents_BookId",
+                table: "BookEvents",
                 column: "BookId");
         }
 
@@ -102,7 +104,7 @@ namespace BookHistoryApi.Migrations
                 name: "AuthorBook");
 
             migrationBuilder.DropTable(
-                name: "BookChangeHistories");
+                name: "BookEvents");
 
             migrationBuilder.DropTable(
                 name: "Authors");

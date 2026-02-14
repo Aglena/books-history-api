@@ -11,7 +11,7 @@ namespace BookHistoryApi.Data
         }
 
         public DbSet<Book> Books => Set<Book>();
-        public DbSet<BookHistoryEntry> BookChangeHistories => Set<BookHistoryEntry>();
+        public DbSet<BookEvent> BookEvents => Set<BookEvent>();
         public DbSet<Author> Authors => Set<Author>();
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -21,6 +21,11 @@ namespace BookHistoryApi.Data
             builder.Entity<Book>()
                 .HasMany(b => b.Authors)
                 .WithMany(a => a.Books);
+
+            builder.Entity<BookEvent>()
+                .HasOne(e => e.Book)
+                .WithMany(b => b.Events)
+                .HasForeignKey(e => e.BookId);
         }
     }
 }

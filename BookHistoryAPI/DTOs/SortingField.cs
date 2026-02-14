@@ -5,6 +5,8 @@ namespace BookHistoryApi.DTOs
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SortingField
     {
-        ChangeDate
+        OccuredAt,
+        EventTarget,
+        EventType
     }
 }
