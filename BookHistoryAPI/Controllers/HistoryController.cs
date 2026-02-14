@@ -15,6 +15,12 @@ namespace BookHistoryApi.Controllers
             _service = service;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<List<BookEventDto>>> GetAll([FromQuery] BookEventQueryDto query)
+        {
+            var history = await _service.GetAll(query);
+            return Ok(history);
+        }
 
         [HttpGet("{id:int:min(1)}")]
         public async Task<ActionResult<List<BookEventDto>>> GetByBookId(int id, [FromQuery] BookEventQueryDto query)

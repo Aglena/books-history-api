@@ -17,6 +17,23 @@ namespace BookHistoryApi.Services
         }
 
 
+        public async Task<List<BookEventDto>> GetAll(BookEventQueryDto queryDto)
+        {
+            BookEventQueryDtoValidator.Validate(queryDto);
+
+            var events = _context.BookEvents.AsNoTracking();
+
+            events = BookEventQuery.Apply(events, queryDto);
+
+            return await events
+                .Select(h => new BookEventDto
+                {
+                    OccuredAt = h.OccuredAt,
+                    Description = h.Description
+                })
+                .ToListAsync();
+        }
+
         public async Task<List<BookEventDto>> GetByBookIdAsync(int bookId, BookEventQueryDto queryDto)
         {
             BookEventQueryDtoValidator.Validate(queryDto);
