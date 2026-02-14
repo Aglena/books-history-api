@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookHistoryApi.Validation
 {
-    public static class BookHistoryDtoValidator
+    public static class BookDtoValidator
     {
         public static void ValidateForUpdate(UpdateBookDto dto)
         {

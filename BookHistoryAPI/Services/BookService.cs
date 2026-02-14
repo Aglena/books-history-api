@@ -19,7 +19,7 @@ namespace BookHistoryApi.Services
 
         public async Task<int> CreateAsync(BookDto dto)
         {
-            BookHistoryDtoValidator.ValidateForCreate(dto);
+            BookDtoValidator.ValidateForCreate(dto);
 
             var book = new Book
             {
@@ -59,7 +59,7 @@ namespace BookHistoryApi.Services
 
         public async Task UpdateAsync(int id, UpdateBookDto dto)
         {
-            BookHistoryDtoValidator.ValidateForUpdate(dto);
+            BookDtoValidator.ValidateForUpdate(dto);
 
             var book = await _context.Books
                 .Include(b => b.ChangeHistory)
