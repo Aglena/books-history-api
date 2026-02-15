@@ -23,13 +23,13 @@ namespace BookHistoryApi.Controllers
             return Ok(history);
         }
 
-        [HttpGet("{id:int:min(1)}")]
+        [HttpGet("{bookId:int:min(1)}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<List<BookEventDto>>> GetByBookId(int id, [FromQuery] BookEventQueryDto query)
+        public async Task<ActionResult<List<BookEventDto>>> GetByBookId(int bookId, [FromQuery] BookEventQueryDto query)
         {
-            var history = await _service.GetByBookIdAsync(id, query);
+            var history = await _service.GetByBookIdAsync(bookId, query);
             return Ok(history);
         }
     }
