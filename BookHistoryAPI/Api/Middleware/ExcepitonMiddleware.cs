@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace BookHistoryApi.Middleware
+namespace BookHistoryApi.Api.Middleware
 {
     public class ExcepitonMiddleware : IExceptionHandler
     {

@@ -2,7 +2,7 @@ using BookHistoryApi.Application.DTOs;
 using BookHistoryApi.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookHistoryApi.Controllers
+namespace BookHistoryApi.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
