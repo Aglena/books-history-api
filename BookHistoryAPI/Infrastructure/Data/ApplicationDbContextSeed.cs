@@ -1,7 +1,7 @@
 using BookHistoryApi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookHistoryApi.Data
+namespace BookHistoryApi.Infrastructure.Data
 {
     public static class ApplicationDbContextSeed
     {

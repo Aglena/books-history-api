@@ -1,8 +1,8 @@
 using BookHistoryApi.Application.DTOs;
 using BookHistoryApi.Application.Querying;
 using BookHistoryApi.Application.Validation;
-using BookHistoryApi.Data;
 using BookHistoryApi.Domain.Exceptions;
+using BookHistoryApi.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookHistoryApi.Application.Services
