@@ -1,6 +1,6 @@
-using BookHistoryApi.DTOs;
+using BookHistoryApi.Application.DTOs;
 
-namespace BookHistoryApi.Services
+namespace BookHistoryApi.Application.Services
 {
     public interface IHistoryService
     {

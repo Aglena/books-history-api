@@ -1,6 +1,6 @@
+using BookHistoryApi.Application.Services;
 using BookHistoryApi.Data;
 using BookHistoryApi.Middleware;
-using BookHistoryApi.Services;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.SwaggerGen;
 

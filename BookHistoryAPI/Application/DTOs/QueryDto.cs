@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BookHistoryApi.DTOs
+namespace BookHistoryApi.Application.DTOs
 {
     public abstract class QueryDto
     {

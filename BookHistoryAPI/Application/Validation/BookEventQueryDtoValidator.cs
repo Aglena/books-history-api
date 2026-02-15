@@ -1,8 +1,8 @@
+using BookHistoryApi.Application.DTOs;
 using BookHistoryApi.Domain.Entities;
-using BookHistoryApi.DTOs;
 using System.ComponentModel.DataAnnotations;
 
-namespace BookHistoryApi.Validation
+namespace BookHistoryApi.Application.Validation
 {
     public static class BookEventQueryDtoValidator
     {

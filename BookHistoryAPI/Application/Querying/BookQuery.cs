@@ -1,9 +1,9 @@
+using BookHistoryApi.Application.DTOs;
 using BookHistoryApi.Domain.Entities;
-using BookHistoryApi.DTOs;
 using BookHistoryApi.Extensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookHistoryApi.Querying
+namespace BookHistoryApi.Application.Querying
 {
     public static class BookQuery
     {

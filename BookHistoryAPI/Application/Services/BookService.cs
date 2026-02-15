@@ -1,12 +1,12 @@
+using BookHistoryApi.Application.DTOs;
+using BookHistoryApi.Application.Querying;
+using BookHistoryApi.Application.Validation;
 using BookHistoryApi.Data;
 using BookHistoryApi.Domain.Entities;
 using BookHistoryApi.Domain.Exceptions;
-using BookHistoryApi.DTOs;
-using BookHistoryApi.Querying;
-using BookHistoryApi.Validation;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookHistoryApi.Services
+namespace BookHistoryApi.Application.Services
 {
     public class BookService : IBookService
     {

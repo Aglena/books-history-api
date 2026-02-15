@@ -1,7 +1,7 @@
-using BookHistoryApi.DTOs;
+using BookHistoryApi.Application.DTOs;
 using System.ComponentModel.DataAnnotations;
 
-namespace BookHistoryApi.Validation
+namespace BookHistoryApi.Application.Validation
 {
     public class BookQueryDtoValidator
     {

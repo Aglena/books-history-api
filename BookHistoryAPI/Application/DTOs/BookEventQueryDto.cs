@@ -1,4 +1,4 @@
-namespace BookHistoryApi.DTOs
+namespace BookHistoryApi.Application.DTOs
 {
     public class BookEventQueryDto : QueryDto
     {

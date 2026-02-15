@@ -1,5 +1,5 @@
-using BookHistoryApi.DTOs;
-using BookHistoryApi.Services;
+using BookHistoryApi.Application.DTOs;
+using BookHistoryApi.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookHistoryApi.Controllers
