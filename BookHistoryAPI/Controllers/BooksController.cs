@@ -16,6 +16,8 @@ namespace BookHistoryApi.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] BookDto dto)
         {
             var id = await _service.CreateAsync(dto);
@@ -24,6 +26,7 @@ namespace BookHistoryApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<BookDto>> GetAll([FromQuery] BookQueryDto dto)
         {
             var books = await _service.GetAll(dto);
@@ -31,6 +34,8 @@ namespace BookHistoryApi.Controllers
         }
 
         [HttpGet("{id:int:min(1)}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<BookDto>> GetById(int id)
         {
             var book = await _service.GetByIdAsync(id);
@@ -38,6 +43,9 @@ namespace BookHistoryApi.Controllers
         }
 
         [HttpPatch("{id:int:min(1)}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateBookDto dto)
         {
             await _service.UpdateAsync(id, dto);

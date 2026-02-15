@@ -16,6 +16,7 @@ namespace BookHistoryApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<BookEventDto>>> GetAll([FromQuery] BookEventQueryDto query)
         {
             var history = await _service.GetAll(query);
@@ -23,6 +24,9 @@ namespace BookHistoryApi.Controllers
         }
 
         [HttpGet("{id:int:min(1)}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<List<BookEventDto>>> GetByBookId(int id, [FromQuery] BookEventQueryDto query)
         {
             var history = await _service.GetByBookIdAsync(id, query);
