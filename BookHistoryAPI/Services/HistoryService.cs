@@ -29,7 +29,9 @@ namespace BookHistoryApi.Services
                 .Select(h => new BookEventDto
                 {
                     OccuredAt = h.OccuredAt,
-                    Description = h.Description
+                    Description = h.Description,
+                    Target = h.Target,
+                    Type = h.Type
                 })
                 .ToListAsync();
         }
@@ -54,7 +56,9 @@ namespace BookHistoryApi.Services
                 .Select(h => new BookEventDto
                 {
                     OccuredAt = h.OccuredAt,
-                    Description = h.Description
+                    Description = h.Description,
+                    Target = h.Target,
+                    Type = h.Type
                 })
                 .ToListAsync();
         }
