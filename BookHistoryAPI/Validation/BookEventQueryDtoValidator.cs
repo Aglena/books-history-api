@@ -1,5 +1,5 @@
+using BookHistoryApi.Domain.Entities;
 using BookHistoryApi.DTOs;
-using BookHistoryApi.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace BookHistoryApi.Validation

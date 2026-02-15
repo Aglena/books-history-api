@@ -1,4 +1,4 @@
-namespace BookHistoryApi.Exceptions
+namespace BookHistoryApi.Domain.Exceptions
 {
     public class BookNotFoundException : Exception
     {

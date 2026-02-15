@@ -1,4 +1,4 @@
-using BookHistoryApi.Entities;
+using BookHistoryApi.Domain.Entities;
 
 namespace BookHistoryApi.DTOs
 {

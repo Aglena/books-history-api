@@ -1,4 +1,4 @@
-using BookHistoryApi.Entities;
+using BookHistoryApi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookHistoryApi.Data

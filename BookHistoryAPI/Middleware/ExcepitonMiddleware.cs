@@ -1,4 +1,4 @@
-using BookHistoryApi.Exceptions;
+using BookHistoryApi.Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BookHistoryApi.Entities
+namespace BookHistoryApi.Domain.Entities
 {
     public class Author
     {

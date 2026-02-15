@@ -1,4 +1,4 @@
-namespace BookHistoryApi.Entities
+namespace BookHistoryApi.Domain.Entities
 {
     public class Book
     {

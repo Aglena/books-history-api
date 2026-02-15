@@ -1,6 +1,6 @@
 using BookHistoryApi.Data;
+using BookHistoryApi.Domain.Exceptions;
 using BookHistoryApi.DTOs;
-using BookHistoryApi.Exceptions;
 using BookHistoryApi.Querying;
 using BookHistoryApi.Validation;
 using Microsoft.EntityFrameworkCore;

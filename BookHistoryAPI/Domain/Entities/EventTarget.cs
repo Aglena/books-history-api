@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace BookHistoryApi.Entities
+namespace BookHistoryApi.Domain.Entities
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum EventTarget

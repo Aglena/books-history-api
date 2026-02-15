@@ -1,5 +1,5 @@
+using BookHistoryApi.Domain.Entities;
 using BookHistoryApi.DTOs;
-using BookHistoryApi.Entities;
 using BookHistoryApi.Extensions;
 using Microsoft.EntityFrameworkCore;
 
