@@ -33,6 +33,16 @@ namespace BookHistoryApi.Services
             };
 
             _context.Books.Add(book);
+
+            _context.BookEvents.Add(new BookEvent
+            {
+                Book = book,
+                OccuredAt = DateTime.UtcNow,
+                Target = EventTarget.Book,
+                Type = EventType.Created,
+                Description = $"Book \"{book.Title}\" created"
+            });
+
             await _context.SaveChangesAsync();
 
             return book.Id;
@@ -100,6 +110,7 @@ namespace BookHistoryApi.Services
 
             await _context.SaveChangesAsync();
         }
+
 
         private void UpdateTitleIfChanged(Book book, string? title, DateTime now)
         {
