@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace BookHistoryApi.Extensions
+namespace BookHistoryApi.Application.Querying
 {
     public static class QueryExtensions
     {
