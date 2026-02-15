@@ -1,6 +1,7 @@
 using BookHistoryApi.DTOs;
 using BookHistoryApi.Entities;
 using BookHistoryApi.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookHistoryApi.Querying
 {
@@ -17,11 +18,19 @@ namespace BookHistoryApi.Querying
         private static IQueryable<Book> ApplyFiltering(IQueryable<Book> books, BookQueryDto dto)
         {
             if (!string.IsNullOrWhiteSpace(dto.TitleOrDescription))
-                books = books.Where(
-                    h => h.Title.Contains(dto.TitleOrDescription) || h.Description.Contains(dto.TitleOrDescription));
+            {
+                var pattern = $"%{dto.TitleOrDescription.Trim()}%";
+                books = books.Where(b =>
+                    EF.Functions.Like(b.Title, pattern) ||
+                    EF.Functions.Like(b.Description, pattern));
+            }
 
             if (!string.IsNullOrWhiteSpace(dto.Author))
-                books = books.Where(h => h.Authors.Any(a => a.Name.Contains(dto.Author)));
+            {
+                var pattern = $"%{dto.Author.Trim()}%";
+                books = books.Where(b =>
+                    b.Authors.Any(a => EF.Functions.Like(a.Name, pattern)));
+            }
 
             if (dto.PublishedFrom.HasValue)
                 books = books.Where(h => h.PublishDate >= dto.PublishedFrom.Value);

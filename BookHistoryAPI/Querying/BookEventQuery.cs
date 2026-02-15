@@ -1,6 +1,7 @@
 using BookHistoryApi.DTOs;
 using BookHistoryApi.Entities;
 using BookHistoryApi.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookHistoryApi.Querying
 {
@@ -37,7 +38,10 @@ namespace BookHistoryApi.Querying
                 events = events.Where(h => h.OccuredAt <= dto.OccuredTo.Value);
 
             if (!string.IsNullOrWhiteSpace(dto.Description))
-                events = events.Where(h => h.Description.Contains(dto.Description));
+            {
+                var pattern = $"%{dto.Description.Trim()}%";
+                events = events.Where(e => EF.Functions.Like(e.Description, pattern));
+            }
 
             return events;
         }
